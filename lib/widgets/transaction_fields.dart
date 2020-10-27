@@ -1,4 +1,8 @@
+
+import 'package:expenses_app/adaptive_widgets/adaptive_date_picker.dart';
+import 'package:expenses_app/adaptive_widgets/adaptive_flat_button.dart';
 import 'package:expenses_app/models/transaction_model.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -39,97 +43,108 @@ class _TransactionFieldsState extends State<TransactionFields> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5.0,
-      child: Container(
-        padding: EdgeInsets.only(
-          top: 15.0,
-          left: 15.0,
-          right: 15.0,
-          bottom: MediaQuery.of(context).viewInsets.bottom + 10
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: [
-            ///Title TextField
-            TextField(
-              decoration: InputDecoration(
-                labelText: 'Title',
-              ),
-              controller: _titleController,
-              onSubmitted: (_) => _amountFocusNode.requestFocus(),
-              onChanged: (_) {
-                _titleErrorVisibility = false;
-                setState(() {});
-              },
-            ),
-
-            ///Error text for empty title
-            Visibility(
-              visible: _titleErrorVisibility,
-              child: textErrorMessage(
-                "Title Required...",
-              ),
-            ),
-
-            ///Amount TextField
-            TextField(
-                focusNode: _amountFocusNode,
+    return SingleChildScrollView(
+      child: Card(
+        elevation: 5.0,
+        child: Container(
+          padding: EdgeInsets.only(
+              top: 15.0,
+              left: 15.0,
+              right: 15.0,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 15),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              ///Title TextField
+              TextField(
                 decoration: InputDecoration(
-                  labelText: 'Amount',
+                  labelText: 'Title',
                 ),
-                controller: _amountController,
-                onSubmitted: (_) => _openDatePicker(),
-                keyboardType: TextInputType.number,
+                controller: _titleController,
+                onSubmitted: (_) => _amountFocusNode.requestFocus(),
                 onChanged: (_) {
-                  _amountErrorVisibility = false;
+                  _titleErrorVisibility = false;
                   setState(() {});
-                }),
-
-            ///Error text for empty title
-            Visibility(
-              visible: _amountErrorVisibility,
-              child: textErrorMessage(
-                "Amount Required...",
+                },
               ),
-            ),
 
-            ///DatePicker container
-            Container(
-              height: 70.0,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      _formattedDate ?? 'No Date Chosen',
-                    ),
+              ///Error text for empty title
+              Visibility(
+                visible: _titleErrorVisibility,
+                child: textErrorMessage(
+                  "Title Required...",
+                ),
+              ),
+
+              ///Amount TextField
+              TextField(
+                  focusNode: _amountFocusNode,
+                  decoration: InputDecoration(
+                    labelText: 'Amount',
                   ),
-                  FlatButton(
-                    child: Text(
-                      'Choose Date',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                  controller: _amountController,
+                  onSubmitted: (_) => _openDatePicker(),
+                  keyboardType: TextInputType.number,
+                  onChanged: (_) {
+                    _amountErrorVisibility = false;
+                    setState(() {});
+                  }),
+
+              ///Error text for empty title
+              Visibility(
+                visible: _amountErrorVisibility,
+                child: textErrorMessage(
+                  "Amount Required...",
+                ),
+              ),
+
+              ///DatePicker container
+              Container(
+                height: 70.0,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Picked Date: ',
+                          ),
+                          Text(
+                            _formattedDate ?? 'No Date Chosen',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 15.0
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    textColor: Theme.of(context).primaryColor,
-                    onPressed: _openDatePicker,
-                  )
-                ],
-              ),
-            ),
 
-            ///Add transaction button
-            RaisedButton(
-              child: Text('Add Transaction'),
-              textColor: Theme.of(context).textTheme.button.color,
-              color: Theme.of(context).primaryColor,
-              onPressed: _submitTransaction,
-            )
-          ],
+                    AdaptiveFlatButton(
+                      text: 'Choose Date',
+                      onPressed: _openDatePicker,
+                    ),
+                  ],
+                ),
+              ),
+
+              ///Add transaction button
+              RaisedButton(
+                child: Text('Add Transaction'),
+                textColor: Theme.of(context).textTheme.button.color,
+                color: Theme.of(context).primaryColor,
+                onPressed: _submitTransaction,
+              )
+            ],
+          ),
         ),
       ),
     );
   }
+
+
 
   ///To return error text with message
   Widget textErrorMessage(String errorMessage) {
@@ -195,18 +210,15 @@ class _TransactionFieldsState extends State<TransactionFields> {
     return true;
   }
 
-  ///To open date picker
+  ///To open date picker with respect to platform
   void _openDatePicker() {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2019),
-      lastDate: DateTime.now(),
-    ).then((pickedDate) {
-      if (pickedDate == null) return;
-      _chosenDate = pickedDate;
-      _formattedDate = 'Picked Date: ${DateFormat.yMMMd().format(pickedDate)}';
-      setState(() {});
-    });
+   AdaptiveDatePicker().openDatePicker(context, (pickedDate) {
+     if (pickedDate == null) return;
+     setState(() {
+       _chosenDate = pickedDate;
+       _formattedDate =
+       '${DateFormat.yMMMd().format(pickedDate)}';
+     });
+   });
   }
 }

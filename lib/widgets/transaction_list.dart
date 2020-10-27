@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:expenses_app/transaction_card.dart';
+import 'package:expenses_app/widgets/add_more_transactions_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -8,26 +11,34 @@ class TransactionList extends StatelessWidget {
   final List<Transaction> transactionsList;
 
   final Function(Transaction transaction) onDeleteItemClicked;
+  final Function() onAddTransactionClicked;
 
-  TransactionList({this.transactionsList, this.onDeleteItemClicked});
-
+  TransactionList(
+      {this.transactionsList,
+      this.onDeleteItemClicked,
+      this.onAddTransactionClicked});
 
   @override
   Widget build(BuildContext context) {
-    return transactionsList.isEmpty
-        ? _noTransactionView
-        : _transactionsView;
+    return transactionsList.isEmpty ? _noTransactionView : _transactionsView;
   }
 
-  Widget get _transactionsView{
-   return Expanded(
+  Widget get _transactionsView {
+    return Expanded(
       child: Container(
         child: ListView.builder(
           itemBuilder: (context, index) {
             //Transaction transaction = transactionsList[index];
-            return transactionCardModel(index);
+            bool lastItem = index == transactionsList.length;
+            return Platform.isIOS && lastItem
+                ? AddMoreTransaction(
+                    onAddPressed: onAddTransactionClicked,
+                  )
+                : lastItem
+                    ? Container()
+                    : transactionCardModel(index);
           },
-          itemCount: transactionsList.length,
+          itemCount: transactionsList.length + 1,
           /*children: [
             Column(
               children: [
@@ -47,7 +58,7 @@ class TransactionList extends StatelessWidget {
   }
 
   ///No Transaction view
-  Widget get _noTransactionView{
+  Widget get _noTransactionView {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Column(
@@ -73,7 +84,6 @@ class TransactionList extends StatelessWidget {
       },
     );
   }
-
 
   ///Model for transaction card
   Widget transactionCardModel(index) {

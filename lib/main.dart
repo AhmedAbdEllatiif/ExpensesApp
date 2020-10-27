@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:expenses_app/widgets/chart.dart';
 import 'package:expenses_app/widgets/transaction_fields.dart';
 import 'package:expenses_app/widgets/transaction_list.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'models/transaction_model.dart';
 
@@ -41,7 +44,7 @@ class MyApp extends StatelessWidget {
                         fontFamily: 'OpenSans',
                         fontSize: 22.0,
                         fontWeight: FontWeight.bold),
-                  ))),
+                  )),),
       home: MyHomePage(),
     );
   }
@@ -53,87 +56,156 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   bool _isShowCharts = true;
+  var mediaQuery;
 
   @override
   Widget build(BuildContext context) {
-    final appBar = AppBar(
-      title: Text('"Flutter App"'),
-      centerTitle: true,
-    );
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      appBar: appBar,
+    mediaQuery = MediaQuery.of(context);
 
-      ///Body
-      body: OrientationBuilder(
-        builder: (context, orientation) {
-          return orientation == Orientation.landscape ? Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    _isShowCharts ? 'Hide Charts' : 'Show Charts',
-                    style: Theme.of(context).textTheme.headline6,
-                  ),
-                  Switch(
-                    value: _isShowCharts,
-                    onChanged: (value) {
+    ///Scaffold
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            resizeToAvoidBottomInset: false,
 
-                      setState(()=> _isShowCharts = value);
+            ///Body
+            child: SafeArea(child: body),
+
+            ///appbar
+            navigationBar: appBar,
+          )
+        : Scaffold(
+            resizeToAvoidBottomPadding: false,
+
+            ///appbar
+            appBar: appBar,
+
+            ///Body
+            body: SafeArea(child: body),
+
+            ///floatingActionButton
+            floatingActionButton: Platform.isIOS
+                ? Container()
+                : FloatingActionButton(
+                    onPressed: () {
+                      startNewTransaction(context);
                     },
+                    child: Icon(Icons.add),
                   ),
-                ],
-              ),
-              _isShowCharts ? Chart(
-                transactionList: transactionsList,
-                percentageHeight: (MediaQuery.of(context).size.height -
-                    appBar.preferredSize.height -
-                    MediaQuery.of(context).padding.top) *
-                    .5,
-              ) :
-              TransactionList(
-                transactionsList: transactionsList.reversed.toList(),
-                onDeleteItemClicked: (transaction) {
-                  deleteItem(transaction);
-                },
-              ),
-            ],
-          ) : Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Chart(
-                transactionList: transactionsList,
-                percentageHeight: (MediaQuery.of(context).size.height -
-                    appBar.preferredSize.height -
-                    MediaQuery.of(context).padding.top) *
-                    .23,
-              ),
-              TransactionList(
-                transactionsList: transactionsList.reversed.toList(),
-                onDeleteItemClicked: (transaction) {
-                  deleteItem(transaction);
-                },
-              ),
-            ],
-          ) ;
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          startNewTransaction(context);
-        },
-        child: Icon(Icons.add),
-      ),
+          );
+  }
+
+  ///To return body of app
+  Widget get body {
+    return OrientationBuilder(
+      builder: (context, orientation) {
+        return orientation == Orientation.landscape
+            ? landscapeWidget
+            : portraitWidget;
+      },
     );
   }
 
+  ///To return landscape widget
+  Widget get landscapeWidget {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              _isShowCharts ? 'Hide Charts' : 'Show Charts',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            Switch.adaptive(
+              //adaptive to adapt ios and android
+              activeColor: Theme.of(context).accentColor,
+              value: _isShowCharts,
+              onChanged: (value) {
+                setState(() => _isShowCharts = value);
+              },
+            ),
+          ],
+        ),
+        _isShowCharts
+            ? Chart(
+                transactionList: transactionsList,
+                percentageHeight: (mediaQuery.size.height -
+                        appBar.preferredSize.height - //for appbar height
+                        mediaQuery.padding.top) // for status bar height
+                    *
+                    .5,
+              )
+            : TransactionList(
+                transactionsList: transactionsList.reversed.toList(),
+                onAddTransactionClicked: () => startNewTransaction(context),
+                onDeleteItemClicked: (transaction) {
+                  deleteItem(transaction);
+                },
+              ),
+      ],
+    );
+  }
 
+  ///To return portrait mode widget
+  Widget get  portraitWidget {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      //crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Chart(
+          transactionList: transactionsList,
+          percentageHeight: (mediaQuery.size.height -
+                  appBar.preferredSize.height -
+                  mediaQuery.padding.top) *
+              .23,
+        ),
+        TransactionList(
+          transactionsList: transactionsList.reversed.toList(),
+          onAddTransactionClicked: () => startNewTransaction(context),
+          onDeleteItemClicked: (transaction) {
+            deleteItem(transaction);
+          },
+        ),
+      ],
+    );
+  }
+
+  ///To return appbar with respect to platform
+  PreferredSizeWidget get appBar {
+    return Platform.isIOS
+        ? CupertinoNavigationBar(
+            middle: Text(
+              'Expenses',
+            ),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onTap: () => startNewTransaction(context),
+                  child: Icon(CupertinoIcons.add),
+                )
+              ],
+            ),
+          )
+        : AppBar(
+            title: Text('Expenses'),
+            centerTitle: true,
+            actions: [
+              Platform.isIOS
+                  ? IconButton(
+                      icon: Icon(
+                        Icons.add,
+                        color: Colors.white,
+                      ),
+                      onPressed: () => startNewTransaction(context),
+                    )
+                  : Container()
+            ],
+          );
+  }
 
   ///To delete item
   void deleteItem(transaction) {
@@ -146,6 +218,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void startNewTransaction(BuildContext context) {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      barrierColor: Colors.transparent,
       builder: (bCtx) {
         return TransactionFields(
           addTransaction: (transaction) {

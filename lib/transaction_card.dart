@@ -85,7 +85,14 @@ class TransactionCard extends StatelessWidget {
               ),
             ),
 
-            IconButton(
+           MediaQuery.of(context).size.width > 460 ?
+            FlatButton.icon(
+                icon: Icon(Icons.delete),
+                label: Text('Delete',),
+                textColor: Colors.red,
+                onPressed: onDeletePressed,
+            )
+           : IconButton(
               icon: Icon(Icons.delete),
               onPressed: onDeletePressed,
               color: Colors.red,
