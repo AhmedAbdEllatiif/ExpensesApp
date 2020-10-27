@@ -11,40 +11,24 @@ class TransactionList extends StatelessWidget {
 
   TransactionList({this.transactionsList, this.onDeleteItemClicked});
 
-  Key animatedListKey;
 
   @override
   Widget build(BuildContext context) {
     return transactionsList.isEmpty
-        ? Column(
-            children: [
-              Text(
-                'No transaction added yet!',
-                style: Theme.of(context).textTheme.headline5,
-              ),
-              SizedBox(
-                height: 20.0,
-              ),
-              Container(
-                height: 200.0,
-                child: Image(
-                  image: AssetImage(
-                    'assets/images/waiting.png',
-                  ),
-                  fit: BoxFit.cover,
-                ),
-              )
-            ],
-          )
-        : Expanded(
-            child: Container(
-              child:ListView.builder(
-                itemBuilder: (context, index) {
-                  Transaction transaction = transactionsList[index];
-                  return transactionCardModel(index);
-                },
-              itemCount: transactionsList.length,
-                /*children: [
+        ? _noTransactionView
+        : _transactionsView;
+  }
+
+  Widget get _transactionsView{
+   return Expanded(
+      child: Container(
+        child: ListView.builder(
+          itemBuilder: (context, index) {
+            //Transaction transaction = transactionsList[index];
+            return transactionCardModel(index);
+          },
+          itemCount: transactionsList.length,
+          /*children: [
             Column(
               children: [
                 ..._transactionsList.map((transaction) {
@@ -57,13 +41,37 @@ class TransactionList extends StatelessWidget {
               ],
             ),
           ],*/
-              ),
-            ),
-          );
+        ),
+      ),
+    );
   }
 
-  void addToList(){
-
+  ///No Transaction view
+  Widget get _noTransactionView{
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Column(
+          children: [
+            Text(
+              'No transaction added yet!',
+              style: Theme.of(context).textTheme.headline5,
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Container(
+              height: constraints.maxHeight * .5,
+              child: Image(
+                image: AssetImage(
+                  'assets/images/waiting.png',
+                ),
+                fit: BoxFit.cover,
+              ),
+            )
+          ],
+        );
+      },
+    );
   }
 
 
@@ -95,7 +103,6 @@ class TransactionList extends StatelessWidget {
         height: 100.0,
         alignment: Alignment.center,
         child: ListTile(
-
           ///leading
           leading: CircleAvatar(
             backgroundColor: Theme.of(context).primaryColor,
@@ -147,7 +154,6 @@ class TransactionList extends StatelessWidget {
             onPressed: () {
               onDeleteItemClicked(transaction);
             },
-
           ),
         ),
       ),

@@ -5,8 +5,9 @@ import 'package:intl/intl.dart';
 
 class Chart extends StatefulWidget {
   final List<Transaction> transactionList;
+  final percentageHeight;
 
-  Chart({this.transactionList});
+  Chart({this.transactionList, @required this.percentageHeight});
 
   @override
   _ChartState createState() => _ChartState();
@@ -15,6 +16,12 @@ class Chart extends StatefulWidget {
 class _ChartState extends State<Chart> {
   bool _usedDaysOnly = false;
   String _text;
+  double _percentageHeight;
+  @override
+  void initState() {
+    _percentageHeight = widget.percentageHeight;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +45,7 @@ class _ChartState extends State<Chart> {
               elevation: 6.0,
               shadowColor: Theme.of(context).primaryColor,
               child: Container(
-                height: 150.0,
+                height: _percentageHeight,
                 child: ListView.builder(
                   itemBuilder: (context, index) {
                     return listOfExpensesPerCurrentMonth[index];

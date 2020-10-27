@@ -42,7 +42,12 @@ class _TransactionFieldsState extends State<TransactionFields> {
     return Card(
       elevation: 5.0,
       child: Container(
-        padding: EdgeInsets.all(15.0),
+        padding: EdgeInsets.only(
+          top: 15.0,
+          left: 15.0,
+          right: 15.0,
+          bottom: MediaQuery.of(context).viewInsets.bottom + 10
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
