@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:expenses_app/widgets/chart.dart';
+import 'package:expenses_app/widgets/landscape_mode.dart';
+import 'package:expenses_app/widgets/portrait_mode.dart';
 import 'package:expenses_app/widgets/transaction_fields.dart';
-import 'package:expenses_app/widgets/transaction_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'models/transaction_model.dart';
@@ -26,25 +26,26 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-          primarySwatch: Colors.pink,
-          errorColor: Colors.red,
-          accentColor: Color(0xFF152238),
-          fontFamily: 'Quicksand',
-          textTheme: ThemeData.light().textTheme.copyWith(
-                headline5: TextStyle(
-                    fontFamily: 'OpenSans',
-                    fontSize: 18.0,
-                    fontWeight: FontWeight.bold),
-                button:
-                    TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
-          appBarTheme: AppBarTheme(
-              textTheme: ThemeData.light().textTheme.copyWith(
-                    headline6: TextStyle(
-                        fontFamily: 'OpenSans',
-                        fontSize: 22.0,
-                        fontWeight: FontWeight.bold),
-                  )),),
+        primarySwatch: Colors.pink,
+        errorColor: Colors.red,
+        accentColor: Color(0xFF152238),
+        fontFamily: 'Quicksand',
+        textTheme: ThemeData.light().textTheme.copyWith(
+              headline5: TextStyle(
+                  fontFamily: 'OpenSans',
+                  fontSize: 18.0,
+                  fontWeight: FontWeight.bold),
+              button:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+        appBarTheme: AppBarTheme(
+            textTheme: ThemeData.light().textTheme.copyWith(
+                  headline6: TextStyle(
+                      fontFamily: 'OpenSans',
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.bold),
+                )),
+      ),
       home: MyHomePage(),
     );
   }
@@ -56,7 +57,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _isShowCharts = true;
   var mediaQuery;
 
   @override
@@ -100,78 +100,23 @@ class _MyHomePageState extends State<MyHomePage> {
     return OrientationBuilder(
       builder: (context, orientation) {
         return orientation == Orientation.landscape
-            ? landscapeWidget
-            : portraitWidget;
+            ? LandscapeWidget(
+                onAddTransactionClicked: (context) => startNewTransaction(context),
+                onDeleteItemClicked: (transaction) => deleteItem(transaction),
+                transactionsList: transactionsList,
+                appBarHeight: appBar.preferredSize.height,
+              )
+            : PortraitWidget(
+                onAddTransactionClicked: (context) => startNewTransaction(context),
+                onDeleteItemClicked: (transaction) => deleteItem(transaction),
+                transactionsList: transactionsList,
+                appBarHeight: appBar.preferredSize.height,
+              );
       },
     );
   }
 
-  ///To return landscape widget
-  Widget get landscapeWidget {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              _isShowCharts ? 'Hide Charts' : 'Show Charts',
-              style: Theme.of(context).textTheme.headline6,
-            ),
-            Switch.adaptive(
-              //adaptive to adapt ios and android
-              activeColor: Theme.of(context).accentColor,
-              value: _isShowCharts,
-              onChanged: (value) {
-                setState(() => _isShowCharts = value);
-              },
-            ),
-          ],
-        ),
-        _isShowCharts
-            ? Chart(
-                transactionList: transactionsList,
-                percentageHeight: (mediaQuery.size.height -
-                        appBar.preferredSize.height - //for appbar height
-                        mediaQuery.padding.top) // for status bar height
-                    *
-                    .5,
-              )
-            : TransactionList(
-                transactionsList: transactionsList.reversed.toList(),
-                onAddTransactionClicked: () => startNewTransaction(context),
-                onDeleteItemClicked: (transaction) {
-                  deleteItem(transaction);
-                },
-              ),
-      ],
-    );
-  }
 
-  ///To return portrait mode widget
-  Widget get  portraitWidget {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      //crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Chart(
-          transactionList: transactionsList,
-          percentageHeight: (mediaQuery.size.height -
-                  appBar.preferredSize.height -
-                  mediaQuery.padding.top) *
-              .23,
-        ),
-        TransactionList(
-          transactionsList: transactionsList.reversed.toList(),
-          onAddTransactionClicked: () => startNewTransaction(context),
-          onDeleteItemClicked: (transaction) {
-            deleteItem(transaction);
-          },
-        ),
-      ],
-    );
-  }
 
   ///To return appbar with respect to platform
   PreferredSizeWidget get appBar {
@@ -209,9 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   ///To delete item
   void deleteItem(transaction) {
-    setState(() {
       transactionsList.remove(transaction);
-    });
   }
 
   ///To open bottom sheet to start a new transaction

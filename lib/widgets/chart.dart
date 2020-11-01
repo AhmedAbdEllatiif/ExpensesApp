@@ -7,7 +7,7 @@ class Chart extends StatefulWidget {
   final List<Transaction> transactionList;
   final percentageHeight;
 
-  Chart({this.transactionList, @required this.percentageHeight});
+  const Chart({this.transactionList, @required this.percentageHeight});
 
   @override
   _ChartState createState() => _ChartState();

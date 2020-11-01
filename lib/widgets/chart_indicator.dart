@@ -6,7 +6,7 @@ class ChartIndicator extends StatefulWidget {
   final double amount;
   final percentageOfTotal;
 
-  ChartIndicator(
+  const ChartIndicator(
       {this.date,
       this.day = "?",
       this.amount = 0.0,
@@ -26,7 +26,7 @@ class _ChartIndicatorState extends State<ChartIndicator>
     return LayoutBuilder(
       builder: (context, constraints) {
         return Container(
-          margin: EdgeInsets.symmetric(horizontal: 10.0),
+          margin: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -57,7 +57,7 @@ class _ChartIndicatorState extends State<ChartIndicator>
                     ),
                     AnimatedSize(
                       vsync: this,
-                      duration: Duration(seconds: 1),
+                      duration: const Duration(seconds: 1),
                       child: FractionallySizedBox(
                         heightFactor: widget.percentageOfTotal,
                         child: Container(

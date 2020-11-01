@@ -9,7 +9,7 @@ import 'package:intl/intl.dart';
 class TransactionFields extends StatefulWidget {
   final Function(Transaction) addTransaction;
 
-  TransactionFields({this.addTransaction});
+ const TransactionFields({this.addTransaction});
 
   @override
   _TransactionFieldsState createState() => _TransactionFieldsState();
@@ -108,7 +108,7 @@ class _TransactionFieldsState extends State<TransactionFields> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          Text(
+                          const Text(
                             'Picked Date: ',
                           ),
                           Text(
@@ -132,7 +132,7 @@ class _TransactionFieldsState extends State<TransactionFields> {
 
               ///Add transaction button
               RaisedButton(
-                child: Text('Add Transaction'),
+                child: const Text('Add Transaction'),
                 textColor: Theme.of(context).textTheme.button.color,
                 color: Theme.of(context).primaryColor,
                 onPressed: _submitTransaction,

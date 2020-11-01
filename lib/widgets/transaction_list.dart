@@ -13,7 +13,7 @@ class TransactionList extends StatelessWidget {
   final Function(Transaction transaction) onDeleteItemClicked;
   final Function() onAddTransactionClicked;
 
-  TransactionList(
+  const TransactionList(
       {this.transactionsList,
       this.onDeleteItemClicked,
       this.onAddTransactionClicked});

@@ -9,7 +9,7 @@ class AdaptiveFlatButton extends StatelessWidget {
   final String text;
 
 
-  AdaptiveFlatButton({this.onPressed, this.text = 'Nothing to display!!!!'});
+ const AdaptiveFlatButton({this.onPressed, this.text = 'Nothing to display!!!!'});
 
   @override
   Widget build(BuildContext context) {

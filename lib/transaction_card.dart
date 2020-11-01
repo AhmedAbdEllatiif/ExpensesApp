@@ -30,8 +30,8 @@ class TransactionCard extends StatelessWidget {
             Expanded(
               flex: 4,
               child: Container(
-                margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
-                padding: EdgeInsets.all(10.0),
+                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                padding: const EdgeInsets.all(10.0),
                 decoration: BoxDecoration(
                   border: Border.all(
                     color: Theme.of(context).primaryColor,
@@ -61,7 +61,7 @@ class TransactionCard extends StatelessWidget {
                 children: [
                   ///Title
                   Container(
-                    margin: EdgeInsets.symmetric(vertical: 5.0),
+                    margin: const EdgeInsets.symmetric(vertical: 5.0),
                     child: Text(
                       '$title',
                       textAlign: TextAlign.center,
@@ -71,7 +71,7 @@ class TransactionCard extends StatelessWidget {
 
                   ///DateTime
                   Container(
-                    margin: EdgeInsets.symmetric(vertical: 5.0),
+                    margin: const EdgeInsets.symmetric(vertical: 5.0),
                     child: Text(
                       '$dateFormatted',
                       textAlign: TextAlign.center,
@@ -87,13 +87,13 @@ class TransactionCard extends StatelessWidget {
 
            MediaQuery.of(context).size.width > 460 ?
             FlatButton.icon(
-                icon: Icon(Icons.delete),
-                label: Text('Delete',),
+                icon: const Icon(Icons.delete),
+                label: const Text('Delete',),
                 textColor: Colors.red,
                 onPressed: onDeletePressed,
             )
            : IconButton(
-              icon: Icon(Icons.delete),
+              icon: const Icon(Icons.delete),
               onPressed: onDeletePressed,
               color: Colors.red,
             ),
