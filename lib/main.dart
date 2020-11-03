@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:expenses_app/database/database_helper.dart';
 import 'package:expenses_app/widgets/landscape_mode.dart';
 import 'package:expenses_app/widgets/portrait_mode.dart';
 import 'package:expenses_app/widgets/transaction_fields.dart';
@@ -58,11 +59,11 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   var mediaQuery;
-
+  DatabaseBuilder databaseHelper = DatabaseBuilder();
   @override
   Widget build(BuildContext context) {
     mediaQuery = MediaQuery.of(context);
-
+   
     ///Scaffold
     return Platform.isIOS
         ? CupertinoPageScaffold(
@@ -87,8 +88,10 @@ class _MyHomePageState extends State<MyHomePage> {
             floatingActionButton: Platform.isIOS
                 ? Container()
                 : FloatingActionButton(
-                    onPressed: () {
+                    onPressed: () async {
                       startNewTransaction(context);
+
+
                     },
                     child: Icon(Icons.add),
                   ),
@@ -109,7 +112,6 @@ class _MyHomePageState extends State<MyHomePage> {
             : PortraitWidget(
                 onAddTransactionClicked: (context) => startNewTransaction(context),
                 onDeleteItemClicked: (transaction) => deleteItem(transaction),
-                transactionsList: transactionsList,
                 appBarHeight: appBar.preferredSize.height,
               );
       },
@@ -165,9 +167,10 @@ class _MyHomePageState extends State<MyHomePage> {
       barrierColor: Colors.transparent,
       builder: (bCtx) {
         return TransactionFields(
-          addTransaction: (transaction) {
+          addTransaction: (transaction) async {
+
+            await databaseHelper.insertTransaction(transaction);
             setState(() {
-              transactionsList.add(transaction);
             });
           },
         );
@@ -176,7 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   ///To return last 7 days of transaction
-  List<Transaction> get lastWeekTransactions {
+  List<MyTransaction> get lastWeekTransactions {
     return transactionsList.where((tx) {
       final dayBeforeSevenDays = tx.dateTime.subtract(
         Duration(days: DateTime.now().day - 7),
@@ -186,33 +189,33 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   ///Default list of transactions
-  final List<Transaction> transactionsList = [
-    Transaction(
-      id: 't1',
+  final List<MyTransaction> transactionsList = [
+    MyTransaction(
+      id: 200,
       title: 'New Shoes',
       amount: 60.99,
       dateTime: DateTime.now().add(Duration(days: 1)),
     ),
-    Transaction(
-      id: 't2',
+    MyTransaction(
+      id: 200,
       title: 'New Watch',
       amount: 1500.99,
       dateTime: DateTime.now().subtract(Duration(days: 17)),
     ),
-    Transaction(
-      id: 't3',
+    MyTransaction(
+      id: 200,
       title: 'New Wallet',
       amount: 800.99,
       dateTime: DateTime.now().subtract(Duration(days: 1)),
     ),
-    Transaction(
-      id: 't3',
+    MyTransaction(
+      id: 200,
       title: 'New Wallet',
       amount: 800.99,
       dateTime: DateTime.now(),
     ),
-    Transaction(
-      id: 't3',
+    MyTransaction(
+      id: 200,
       title: 'New Wallet',
       amount: 800.99,
       dateTime: DateTime.now().add(Duration(days: 3)),

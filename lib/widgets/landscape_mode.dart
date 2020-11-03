@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 class LandscapeWidget extends StatefulWidget {
-  final List<Transaction> transactionsList;
+  final List<MyTransaction> transactionsList;
   final Function(BuildContext context) onAddTransactionClicked;
-  final Function(Transaction transaction) onDeleteItemClicked;
+  final Function(MyTransaction transaction) onDeleteItemClicked;
   final double appBarHeight;
 
 
@@ -20,9 +20,9 @@ class LandscapeWidget extends StatefulWidget {
 class _LandscapeWidgetState extends State<LandscapeWidget> {
 
   bool _isShowCharts ;
-  List<Transaction> _transactionsList;
+  List<MyTransaction> _transactionsList;
   Function(BuildContext context) _onAddTransactionClicked;
-  Function(Transaction transaction) _onDeleteItemClicked;
+  Function(MyTransaction transaction) _onDeleteItemClicked;
   double _appBarHeight;
   var mediaQuery;
 
@@ -64,7 +64,6 @@ class _LandscapeWidgetState extends State<LandscapeWidget> {
         ),
         _isShowCharts
             ? Chart(
-          transactionList: _transactionsList,
           percentageHeight: (mediaQuery.size.height -
               _appBarHeight - //for appbar height
               mediaQuery.padding.top) // for status bar height

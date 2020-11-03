@@ -8,12 +8,12 @@ import 'package:intl/intl.dart';
 import '../models/transaction_model.dart';
 
 class TransactionList extends StatelessWidget {
-  final List<Transaction> transactionsList;
 
-  final Function(Transaction transaction) onDeleteItemClicked;
+
+  final Function(MyTransaction transaction) onDeleteItemClicked;
   final Function() onAddTransactionClicked;
 
-  const TransactionList(
+   TransactionList(
       {this.transactionsList,
       this.onDeleteItemClicked,
       this.onAddTransactionClicked});
@@ -22,24 +22,26 @@ class TransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return transactionsList.isEmpty ? _noTransactionView : _transactionsView;
   }
-
+List<MyTransaction> transactionsList;
   Widget get _transactionsView {
     return Expanded(
-      child: Container(
-        child: ListView.builder(
-          itemBuilder: (context, index) {
-            //Transaction transaction = transactionsList[index];
-            bool lastItem = index == transactionsList.length;
-            return Platform.isIOS && lastItem
-                ? AddMoreTransaction(
-                    onAddPressed: onAddTransactionClicked,
-                  )
-                : lastItem
+      child: FutureBuilder(
+        builder: (context, snapshot) {
+          return Container(
+            child: ListView.builder(
+              itemBuilder: (context, index) {
+                //Transaction transaction = transactionsList[index];
+                bool lastItem = index == transactionsList.length;
+                return Platform.isIOS && lastItem
+                    ? AddMoreTransaction(
+                  onAddPressed: onAddTransactionClicked,
+                )
+                    : lastItem
                     ? Container()
-                    : transactionCardModel(index);
-          },
-          itemCount: transactionsList.length + 1,
-          /*children: [
+                    : transactionCardModel(snapshot.data[index]);
+              },
+              itemCount: snapshot.data.length + 1,
+              /*children: [
             Column(
               children: [
                 ..._transactionsList.map((transaction) {
@@ -52,7 +54,10 @@ class TransactionList extends StatelessWidget {
               ],
             ),
           ],*/
-        ),
+            ),
+          );
+        },
+
       ),
     );
   }
@@ -86,8 +91,8 @@ class TransactionList extends StatelessWidget {
   }
 
   ///Model for transaction card
-  Widget transactionCardModel(index) {
-    Transaction transaction = transactionsList[index];
+
+  Widget transactionCardModel(transaction) {
     return TransactionCard(
       title: transaction.title,
       amount: transaction.amount,
@@ -100,7 +105,7 @@ class TransactionList extends StatelessWidget {
 
   ///Testing for listTile
   Widget listTileForTesting(context, index) {
-    Transaction transaction = transactionsList[index];
+    MyTransaction transaction = transactionsList[index];
 
     double amount = transaction.amount;
     String title = transaction.title;

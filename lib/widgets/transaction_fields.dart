@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class TransactionFields extends StatefulWidget {
-  final Function(Transaction) addTransaction;
+  final Function(MyTransaction) addTransaction;
 
  const TransactionFields({this.addTransaction});
 
@@ -178,11 +178,12 @@ class _TransactionFieldsState extends State<TransactionFields> {
     if (!isAllFieldsFilled()) return;
 
     widget.addTransaction(
-      Transaction(
-        id: DateTime.now().toString(),
+      MyTransaction(
+        id: 5,
         title: '${_titleController.text}',
         amount: double.parse('${_amountController.text}'),
         dateTime: _chosenDate ?? DateTime.now(),
+        dateTimeMM_stamp: _chosenDate.millisecondsSinceEpoch ??  DateTime.now().millisecondsSinceEpoch
       ),
     );
     Navigator.of(context).pop();

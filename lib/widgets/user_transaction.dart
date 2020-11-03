@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 
 class UserTransaction extends StatefulWidget {
-   final List<Transaction> transactionsList;
+   final List<MyTransaction> transactionsList;
 
 
    UserTransaction(this.transactionsList);
@@ -18,7 +18,7 @@ class UserTransaction extends StatefulWidget {
 }
 
 class _UserTransactionState extends State<UserTransaction> {
-  List<Transaction> _transactionsList;
+  List<MyTransaction> _transactionsList;
 
   @override
   void initState() {
