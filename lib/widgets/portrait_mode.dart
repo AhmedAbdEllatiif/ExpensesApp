@@ -26,7 +26,6 @@ class _PortraitWidgetState extends State<PortraitWidget> {
   double _appBarHeight;
   var mediaQuery;
 
-
   @override
   void initState() {
     _onAddTransactionClicked = widget.onAddTransactionClicked;
@@ -44,24 +43,19 @@ class _PortraitWidgetState extends State<PortraitWidget> {
       future: databaseHelper.getAllTransactions(),
       builder: (context, snapshot) {
         _transactionsList = snapshot.data;
-       return Column(
+        return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           //crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Chart(
               percentageHeight: (mediaQuery.size.height -
-                  _appBarHeight -
-                  mediaQuery.padding.top) *
+                      _appBarHeight -
+                      mediaQuery.padding.top) *
                   .23,
             ),
             TransactionList(
-                onAddTransactionClicked: () =>
-                    _onAddTransactionClicked(context),
-                onDeleteItemClicked: (transaction) {
-                  setState(() {
-                    _onDeleteItemClicked(transaction);
-                  });
-                }),
+              onAddTransactionClicked: () => _onAddTransactionClicked(context),
+            ),
           ],
         );
       },

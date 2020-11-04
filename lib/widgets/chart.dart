@@ -18,60 +18,96 @@ class _ChartState extends State<Chart> {
   bool _usedDaysOnly = false;
   String _text;
   double _percentageHeight;
-  List<MyTransaction> transactionList;
+  List<MyTransaction> transactionList = List<MyTransaction>();
   DatabaseBuilder databaseHelper = DatabaseBuilder();
 
   @override
   void initState() {
     _percentageHeight = widget.percentageHeight;
-
     super.initState();
   }
 
+ // used by StreamBuilder
+  Stream<List<MyTransaction>> streamTransactions() async* {
+     while(true){
+       await databaseHelper.getAllTransactions().then((value) => transactionList = value);
+       yield transactionList;
+     }
+
+  }
   @override
   Widget build(BuildContext context) {
     _text = _usedDaysOnly ? 'Show All Expenses' : 'Show only expenses  Days';
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0, vertical: 8.0),
-      child: FutureBuilder(
-        future: databaseHelper.getAllTransactions(),
+      child: StreamBuilder(
+        stream: streamTransactions(),
         builder: (context, snapshot) {
-          transactionList = snapshot.data;
-          return Container(
-            child: Column(
-              children: [
-                FlatButton(
-                    onPressed: () {
-                      setState(() {
-                        _usedDaysOnly = !_usedDaysOnly;
-                      });
-                    },
-                    child: Text(
-                      _text,
-                      style: Theme.of(context).textTheme.headline5,
-                    )),
-                Card(
-                  elevation: 6.0,
-                  shadowColor: Theme.of(context).primaryColor,
-                  child: Container(
-                    height: _percentageHeight,
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        return listOfExpensesPerCurrentMonth[index];
-                      },
-                      itemCount: listOfExpensesPerCurrentMonth.length,
-                      scrollDirection: Axis.horizontal,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+
+          if (snapshot.connectionState == ConnectionState.active)   {
+            transactionList = snapshot.data;
+            return  _mainView;
+          }
+
+          if (snapshot.hasData && snapshot.data != null){
+            transactionList = snapshot.data;
+            return  _mainView;
+          }
+
+          //progress UI
+          if (snapshot.connectionState != ConnectionState.done)
+            return Center(
+                child: Text ("Loading"),
           );
+
+          //load null data UI
+          if (!snapshot.hasData || snapshot.data == null) return Container();
+
+
+          //load empty data UI
+          if (snapshot.data.isEmpty) return Container();
+
+          transactionList = snapshot.data;
+          return  _mainView;
         },
 
       ),
     );
   }
+
+
+  Widget get _mainView{
+    return Container(
+      child: Column(
+        children: [
+          FlatButton(
+              onPressed: () {
+                setState(() {
+                  _usedDaysOnly = !_usedDaysOnly;
+                });
+              },
+              child: Text(
+                _text,
+                style: Theme.of(context).textTheme.headline5,
+              )),
+          Card(
+            elevation: 6.0,
+            shadowColor: Theme.of(context).primaryColor,
+            child: Container(
+              height: _percentageHeight,
+              child: ListView.builder(
+                itemBuilder: (context, index) {
+                  return listOfExpensesPerCurrentMonth[index];
+                },
+                itemCount: listOfExpensesPerCurrentMonth.length,
+                scrollDirection: Axis.horizontal,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+}
 
   ///To return list of expenses per current month
   List<ChartIndicator> get listOfExpensesPerCurrentMonth {

@@ -179,7 +179,6 @@ class _TransactionFieldsState extends State<TransactionFields> {
 
     widget.addTransaction(
       MyTransaction(
-        id: 5,
         title: '${_titleController.text}',
         amount: double.parse('${_amountController.text}'),
         dateTime: _chosenDate ?? DateTime.now(),

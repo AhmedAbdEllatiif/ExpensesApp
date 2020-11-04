@@ -71,9 +71,7 @@ class _LandscapeWidgetState extends State<LandscapeWidget> {
               .5,
         )
             : TransactionList(
-          transactionsList: _transactionsList.reversed.toList(),
           onAddTransactionClicked: () => _onAddTransactionClicked(context),
-          onDeleteItemClicked: (transaction) => _onDeleteItemClicked(transaction),
         ),
       ],
     );
